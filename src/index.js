@@ -2,7 +2,9 @@
 
 import express from 'express'
 import bodyparser from 'body-parser'
-import Database from './helpers/db'
+
+import { Database } from './helpers'
+import routes from './routes'
 
 const app = express()
 const database = new Database()
@@ -21,9 +23,10 @@ const init = async () => {
     app.use(bodyparser.urlencoded({extended: true}))
     app.use(bodyparser.json())
 
+    Object.keys(routes).forEach(router => app.use('/' + router.toLowerCase(), routes[router]))
 
+    console.log(app._router)
     app.listen(port, () => {
-        console.log(database)
         console.log(`Listening on port ${port}`)
     })
 }
