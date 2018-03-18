@@ -1,5 +1,3 @@
 import Income from './Income'
 
-export {
-    Income
-}
+export { Income }

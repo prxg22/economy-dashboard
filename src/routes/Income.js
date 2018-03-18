@@ -1,13 +1,56 @@
-import { Router } from 'express'
+import { Route } from 'express'
 
 import { Income } from '../domains'
 
-const router = new Router('income')
+const create = async (req, res) => {
+    if (!req.body.date ||
+        !req.body.date.year ||
+        !req.body.value ||
+        !req.body.desc) return res.status(400).send()
 
-const create = (req, res, next) => {
-    Income.create(req.body)
-    res.send()
+    let income = {}
+
+    try {
+        income = await Income.create(req.body)
+    } catch (e) {
+        console.error(e);
+        return res.status(500).send({ error: e })
+    }
+
+    return res.send(income)
 }
-router.post('/', create)
 
-export default router
+const all = async (req, res) => {
+    let incomes = []
+
+    try {
+        incomes = await Income.all()
+    } catch (e) {
+        console.error(e);
+        return res.status(500).send({ error: e.msg })
+    }
+
+    return res.send(incomes)
+}
+
+const globals = async (req, res) => {
+    if (!req.params.year) return res.status(400).send()
+
+    let incomes = []
+
+    try {
+        incomes = await Income.getGlobals(req.params.year)
+    } catch (e) {
+        console.error(e);
+        return res.status(500).send({ error: e.msg })
+    }
+
+    return res.send(incomes)
+
+}
+
+export default {
+    create,
+    all,
+    globals
+}

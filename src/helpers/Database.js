@@ -2,21 +2,22 @@ import mongoose from 'mongoose'
 
 class Database {
     connect = async () => {
-        mongoose.Promise =  global.Promise
-
-        if (this.db) return resolve(this.db)
+        mongoose.Promise = global.Promise
 
         // Database connection
         try {
             await mongoose.connect('mongodb://127.0.0.1:27017')
-        } catch(e) {
+        } catch (e) {
             console.error(e)
-            return exit(-1)
+            throw new Error(e)
         }
 
-        this.connection = mongoose.connection
         console.log('> database connection succeed!')
+        this.connection = mongoose.connection
+
+        return this.connection
     }
+
 }
 
-export default Database
+export default new Database()
