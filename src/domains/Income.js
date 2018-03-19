@@ -17,7 +17,7 @@ const create = async ({ value, date, desc, isPayed, isGlobal }) => {
         income = await db.Income.saveIncome({ value, date, desc, isPayed, isGlobal })
     } catch (e) {
         console.error(e)
-        throw new Error(e)
+        throw e
     }
 
     return income

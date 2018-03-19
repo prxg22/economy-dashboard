@@ -1,25 +1,51 @@
 import mongoose from 'mongoose'
 
-const IncomeSchema = mongoose.Schema({
-    value: Number,
-    desc: String,
-    date: {
-        month: Number,
-        year: Number
+const DateSchema = mongoose.Schema({
+    day: {
+        type: Number
     },
-    isGlobal: Boolean,
-    isPayed: Boolean
+    month: {
+        type: Number
+    },
+    year: {
+        type: Number,
+        required: true
+    }
 })
+
+const IncomeSchema = mongoose.Schema({
+    value: {
+        type: Number,
+        required: true
+    },
+    desc: {
+        type: String,
+        required: true
+    },
+    date: {
+        type: DateSchema,
+        required: true
+    },
+    isGlobal: {
+        type: Boolean,
+        default: false
+    },
+    isPayed: {
+        type: Boolean,
+        default: false
+    }
+})
+
+IncomeSchema.index({ value: 1, desc: 1 }, { unique: true })
 
 export const IncomeModel = mongoose.model('income', IncomeSchema)
 
 const saveIncome = async (incomeData) => {
     const income = new IncomeModel(incomeData)
-
     try {
         await income.save()
     } catch (e) {
-        throw new Error(e)
+        throw e
         return
     }
 
