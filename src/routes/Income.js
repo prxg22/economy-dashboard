@@ -2,7 +2,7 @@ import { Route } from 'express'
 
 import { Income } from '../domains'
 
-const create = async (req, res) => {
+const create = async (req, res, next) => {
     if (!req.body.date ||
         !req.body.date.year ||
         !req.body.value ||
@@ -13,8 +13,8 @@ const create = async (req, res) => {
     try {
         income = await Income.create(req.body)
     } catch (e) {
-        console.error(e);
-        return res.status(500).send({ error: e })
+        next(e)
+        throw e
     }
 
     return res.send(income)
@@ -26,8 +26,8 @@ const all = async (req, res) => {
     try {
         incomes = await Income.all()
     } catch (e) {
-        console.error(e);
-        return res.status(500).send({ error: e.msg })
+        next(e)
+        throw e
     }
 
     return res.send(incomes)
@@ -41,8 +41,8 @@ const globals = async (req, res) => {
     try {
         incomes = await Income.getGlobals(req.params.year)
     } catch (e) {
-        console.error(e);
-        return res.status(500).send({ error: e.msg })
+        next(e)
+        throw e
     }
 
     return res.send(incomes)

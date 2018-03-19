@@ -29,8 +29,7 @@ const all = async () => {
     try {
         incomes = await db.Income.all()
     } catch (e) {
-        console.error(e)
-        throw new Error(e)
+        throw e
     }
 
     return incomes
@@ -44,11 +43,12 @@ const getGlobals = async (year) => {
     try {
         incomes = await db.Income.findByYear(year)
     } catch (e) {
-        console.error(e)
-        throw new Error(e)
+        throw e
     }
 
     return incomes
 }
+
+
 
 export default { create, all, getGlobals }

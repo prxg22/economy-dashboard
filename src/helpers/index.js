@@ -1,3 +1,4 @@
 import Database from './Database'
+import ErrorHandler from './ErrorHandler'
 
-export { Database }
+export { Database, ErrorHandler }

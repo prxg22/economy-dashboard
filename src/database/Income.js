@@ -69,8 +69,7 @@ const all = async () => {
     try {
         incomes = await IncomeModel.find()
     } catch (e) {
-        throw new Error(e)
-        return
+        throw e
     }
 
     return incomes
@@ -81,8 +80,7 @@ const findByYear = async (year) => {
     try {
         incomes = await IncomeModel.find({ 'date.year': year })
     } catch (e) {
-        throw new Error(e)
-        return
+        throw e
     }
 
     return incomes
