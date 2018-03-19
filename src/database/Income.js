@@ -13,18 +13,27 @@ const DateSchema = mongoose.Schema({
     }
 })
 
+DateSchema
+    .virtual('toDate')
+    .get(function () {
+        return new Date(`${this.year}-${this.month || 1}-${this.day || 1}`);
+    })
+
 const IncomeSchema = mongoose.Schema({
     value: {
         type: Number,
-        required: true
+        required: true,
+        index: true,
     },
     desc: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     date: {
         type: DateSchema,
-        required: true
+        required: true,
+        index: true
     },
     isGlobal: {
         type: Boolean,
@@ -34,9 +43,11 @@ const IncomeSchema = mongoose.Schema({
         type: Boolean,
         default: false
     }
+}, {
+    timestamps: true
 })
 
-IncomeSchema.index({ value: 1, desc: 1 }, { unique: true })
+IncomeSchema.index({ value: 1, desc: 1, "date.month": -1, "date.year": -1 }, { unique: true })
 
 export const IncomeModel = mongoose.model('income', IncomeSchema)
 

@@ -19,8 +19,8 @@
     "eslint-plugin-class-property": "^1.1.0"
   },
   "scripts": {
-    "babel-node": "babel-node src/",
-    "start": "PORT=3030 nodemon --exec npm run babel-node && npm run lint -- --ignore .gitignore src/index.js",
+    "babel-node": "babel-node --debug src/",
+    "start": "PORT=3030 nodemon --exec npm run babel-node && npm run lint -- --ignore .gitignore src/",
     "test": "mocha",
     "lint": "eslint --ignore-pattern '!.gitignore' .",
     "lint:fix": "eslint --fix --ignore-pattern '!.gitignore' ."

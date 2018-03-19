@@ -49,8 +49,11 @@ const globals = async (req, res) => {
 
 }
 
-export default {
-    create,
-    all,
-    globals
+export default (router) => {
+    router.route('/income')
+        .get(all)
+        .post(create)
+
+    router.route('/income/:year')
+        .get(globals)
 }
