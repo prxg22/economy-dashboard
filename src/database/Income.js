@@ -37,11 +37,18 @@ const IncomeSchema = mongoose.Schema({
     },
     isGlobal: {
         type: Boolean,
-        default: false
+        default: false,
+        select: false
     },
-    isPayed: {
+    deleted: {
         type: Boolean,
-        default: false
+        default: false,
+        // select: false
+    },
+    edited: {
+        type: Boolean,
+        default: false,
+        // select: false
     }
 }, {
     timestamps: true
@@ -51,7 +58,7 @@ IncomeSchema.index({ value: 1, desc: 1, "date.month": -1, "date.year": -1 }, { u
 
 export const IncomeModel = mongoose.model('income', IncomeSchema)
 
-const saveIncome = async (incomeData) => {
+const save = async (incomeData) => {
     const income = new IncomeModel(incomeData)
     try {
         await income.save()
@@ -78,7 +85,20 @@ const all = async () => {
 const findByYear = async (year) => {
     let incomes
     try {
-        incomes = await IncomeModel.find({ 'date.year': year })
+        incomes = await IncomeModel.find({ 'date.year': year, isGlobal: false })
+    } catch (e) {
+        throw e
+    }
+
+    console.log(incomes)
+
+    return incomes
+}
+
+const findByDate = async (year, month) => {
+    let incomes
+    try {
+        incomes = await IncomeModel.find({ 'date.year': year, 'date.month': month, deleted: false, edited: false, isGlobal: false })
     } catch (e) {
         throw e
     }
@@ -86,8 +106,56 @@ const findByYear = async (year) => {
     return incomes
 }
 
+const del = async (_id) => {
+    let income
+
+    try {
+        income = await IncomeModel.findById({ _id, _deleted: false, _edited: false })
+        if (!income) throw new Error(`Income id (${_id}) don't exist`)
+    } catch(e) {
+        throw e
+    }
+    try {
+        income._deleted = true
+
+        await income.save()
+    } catch (e) {
+        throw e
+    }
+
+    return income
+}
+
+const edit = async (_id, { value, desc, date }) => {
+    try {
+        var income = await IncomeModel.findById({ _id })
+    } catch (e) {
+        throw e
+    }
+
+    const newIncome = {
+        value: value || income.value,
+        desc: desc || income.desc,
+        date: date || income.date,
+    }
+
+    income.edited = true
+
+    try {
+        await income.save()
+        income = await save(newIncome)
+    } catch (e) {
+        throw e
+    }
+
+    return income
+}
+
 export default {
-    saveIncome,
+    save,
+    del,
     all,
-    findByYear
+    edit,
+    findByYear,
+    findByDate
 }
